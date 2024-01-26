@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!-- 根标签 -->
+<configuration>
+<!--    <properties>-->
+<!--        <property name="driver" value="com.mysql.cj.jdbc.Driver"/>-->
+<!--        <property name="url" value="jdbc:mysql://127.0.0.1:3306/beatpoker?useUnicode=true&amp;characterEncoding=utf-8&amp;allowMultiQueries=true"/>-->
+<!--        <property name="username" value="root"/>-->
+<!--        <property name="password" value="password"/>-->
+<!--    </properties>-->
+
+<!--    &lt;!&ndash; 环境，可以配置多个，default：指定采用哪个环境 &ndash;&gt;-->
+<!--    <environments default="test">-->
+<!--        &lt;!&ndash; id：唯一标识 &ndash;&gt;-->
+<!--        <environment id="test">-->
+<!--            &lt;!&ndash; 事务管理器，JDBC类型的事务管理器 &ndash;&gt;-->
+<!--            <transactionManager type="JDBC" />-->
+<!--            &lt;!&ndash; 数据源，池类型的数据源 &ndash;&gt;-->
+<!--            <dataSource type="POOLED">-->
+<!--                <property name="driver" value="com.mysql.cj.jdbc.Driver" />-->
+<!--                <property name="url" value="jdbc:mysql://127.0.0.1:3306/beatpoker_test" />-->
+<!--                <property name="username" value="root" />-->
+<!--                <property name="password" value="password" />-->
+<!--            </dataSource>-->
+<!--        </environment>-->
+<!--        <environment id="release">-->
+<!--            &lt;!&ndash; 事务管理器，JDBC类型的事务管理器 &ndash;&gt;-->
+<!--            <transactionManager type="JDBC" />-->
+<!--            &lt;!&ndash; 数据源，池类型的数据源 &ndash;&gt;-->
+<!--            <dataSource type="POOLED">-->
+<!--                <property name="driver" value="${driver}" /> &lt;!&ndash; 配置了properties，所以可以直接引用 &ndash;&gt;-->
+<!--                <property name="url" value="${url}" />-->
+<!--                <property name="username" value="${username}" />-->
+<!--                <property name="password" value="${password}" />-->
+<!--            </dataSource>-->
+<!--        </environment>-->
+<!--    </environments>-->
+
+    <typeAliases>
+        <typeAlias alias="Integer" type="java.lang.Integer" />
+        <typeAlias alias="Long" type="java.lang.Long" />
+        <typeAlias alias="HashMap" type="java.util.HashMap" />
+        <typeAlias alias="LinkedHashMap" type="java.util.LinkedHashMap" />
+        <typeAlias alias="ArrayList" type="java.util.ArrayList" />
+        <typeAlias alias="LinkedList" type="java.util.LinkedList" />
+    </typeAliases>
+</configuration>

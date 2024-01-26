@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- mapper:根标签，namespace：命名空间，随便写，一般保证命名空间唯一 -->
+<!--CREATE TABLE tb_user (-->
+<!--    id INT AUTO_INCREMENT,-->
+<!--    user_id VARCHAR(255) NOT NULL,-->
+<!--    email_address VARCHAR(255) NOT NULL,-->
+<!--    password VARCHAR(255) NOT NULL,-->
+<!--    nick_name VARCHAR(255) NOT NULL,-->
+<!--    created_time DATE,-->
+<!--    PRIMARY KEY (id),-->
+<!--    UNIQUE (user_id,email_address)-->
+<!--);-->
+<mapper namespace="IUserDao">
+    <!-- statement，内容：sql语句。id：唯一标识，随便写，在同一个命名空间下保持唯一
+       resultType：sql语句查询结果集的封装类型,tb_user即为数据库中的表
+     -->
+    <!--添加用户 -->
+    <insert id="insertUser" parameterType="com.jhf.beatpoker.web.dao.entity.User">
+        INSERT IGNORE INTO tb_user (user_id,email_address,password,nick_name,created_time)
+        VALUES(
+            #{userId},
+            #{emailAddress},
+            #{password},
+            #{nickName},
+            CURDATE()
+        );
+   </insert>
+
+    <select id="getUserByEmailAddress" resultType="com.jhf.beatpoker.web.dao.entity.User">
+        SELECT
+            user_id as userId,
+            email_address as emailAddress,
+            password,
+            nick_name as nickName
+        FROM tb_user
+        WHERE email_address = #{emailAddress}
+    </select>
+
+    <select id="getUserByUserId" resultType="com.jhf.beatpoker.web.dao.entity.User">
+        SELECT
+            user_id as userId,
+            email_address as emailAddress,
+            password,
+            nick_name as nickName
+        FROM tb_user
+        WHERE user_id = #{userId}
+    </select>
+
+
+    <!--插入数据-->
+<!--    <update id="updatePassword" parameterType="com.jhf.beatpoker.web.dao.entity.User">-->
+<!--        INSERT IGNORE INTO tb_user(user_id,password) VALUES(#{userId},#{password}) ON DUPLICATE KEY-->
+<!--        UPDATE password = #{password}-->
+<!--    </update>-->
+
+    <update id="updatePassword" parameterType="com.jhf.beatpoker.web.dao.entity.User">
+        UPDATE tb_user
+        SET password = #{password}
+        WHERE user_id = #{userId};
+    </update>
+</mapper>
