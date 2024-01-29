@@ -10,6 +10,9 @@
 <!--        <property name="username" value="root"/>-->
 <!--        <property name="password" value="password"/>-->
 <!--    </properties>-->
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
 
 <!--    &lt;!&ndash; 环境，可以配置多个，default：指定采用哪个环境 &ndash;&gt;-->
 <!--    <environments default="test">-->
@@ -46,4 +49,7 @@
         <typeAlias alias="ArrayList" type="java.util.ArrayList" />
         <typeAlias alias="LinkedList" type="java.util.LinkedList" />
     </typeAliases>
+
+
 </configuration>
+

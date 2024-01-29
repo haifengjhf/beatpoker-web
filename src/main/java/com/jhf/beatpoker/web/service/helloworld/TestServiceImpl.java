@@ -8,21 +8,21 @@ import org.springframework.stereotype.Service;
 
 @Service("TestService")
 public class TestServiceImpl implements ITestService {
-    @Autowired
-    private ITestDao mTestData;
-
-//    private final ITestDao mTestData;
-//
 //    @Autowired
-//    public TestServiceImpl(@Qualifier("TestDao") ITestDao testData) {
-//        this.mTestData = testData;
-//    }
+//    private ITestDao mTestData;
+
+    private final ITestDao mTestData;
+
+    @Autowired
+    public TestServiceImpl(ITestDao testData) {
+        this.mTestData = testData;
+    }
 
 
     @Override
     public HelloBean test() {
         HelloBean helloBean = new HelloBean();
-        User user = mTestData.queryUserById("defaultId");
+        User user = mTestData.queryUserByUserId("defaultId");
         if(user == null){
             return helloBean;
         }

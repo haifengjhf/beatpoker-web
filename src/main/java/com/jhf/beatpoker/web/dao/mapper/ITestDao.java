@@ -8,10 +8,10 @@ public interface ITestDao {
     /**
      * 根据id查询用户信息
      *
-     * @param id
+     * @param userId
      * @return
      */
-    public User queryUserById(String id);
+    public User queryUserByUserId(String userId);
 
     /**
      * 查询所有用户信息

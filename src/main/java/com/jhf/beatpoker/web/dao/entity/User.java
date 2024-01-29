@@ -3,6 +3,7 @@ package com.jhf.beatpoker.web.dao.entity;
 import com.jhf.beatpoker.web.common.bean.UserRegisterRequestBean;
 import com.jhf.beatpoker.web.common.utils.UserUtils;
 
+import java.util.Date;
 import java.util.UUID;
 
 public class User {
@@ -12,6 +13,8 @@ public class User {
     //用户密码的md5保存
     private String password;
     private String nickName;//显示昵称
+
+    private Date createdTime;
 
     public User(){
     }
@@ -70,7 +73,7 @@ public class User {
                 ", password='" + password + '\'' +
                 ", nickName='" + nickName + '\'' +
                 ", emailAddress='" + emailAddress + '\'' +
-//                ", createdTime='" + createdTime + '\'' +
+                ", createdTime='" + createdTime + '\'' +
 //                ", created='" + new SimpleDateFormat("yyyy-MM-dd").format(createdTime) + '\'' +
                 '}';
     }
