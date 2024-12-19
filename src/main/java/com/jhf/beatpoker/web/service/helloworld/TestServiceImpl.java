@@ -11,18 +11,19 @@ public class TestServiceImpl implements ITestService {
 //    @Autowired
 //    private ITestDao mTestData;
 
-    private final ITestDao mTestData;
+//    private final ITestDao mTestData;
 
-    @Autowired
-    public TestServiceImpl(ITestDao testData) {
-        this.mTestData = testData;
-    }
+//    @Autowired
+//    public TestServiceImpl(ITestDao testData) {
+//        this.mTestData = testData;
+//    }
 
 
     @Override
     public HelloBean test() {
         HelloBean helloBean = new HelloBean();
-        User user = mTestData.queryUserByUserId("defaultId");
+        User user = null;
+//        User user = mTestData.queryUserByUserId("defaultId");
         if(user == null){
             return helloBean;
         }

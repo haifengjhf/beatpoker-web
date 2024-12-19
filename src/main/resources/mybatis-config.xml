@@ -51,5 +51,10 @@
     </typeAliases>
 
 
+    <mappers>
+        <mapper resource="mappers/TestMapper.xml"/>
+        <mapper resource="mappers/MasterUserMapper.xml"/>
+    </mappers>
+
 </configuration>
 

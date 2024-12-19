@@ -1,10 +1,6 @@
 package com.jhf.beatpoker.web.dao.entity;
 
-import com.jhf.beatpoker.web.common.bean.UserRegisterRequestBean;
-import com.jhf.beatpoker.web.common.utils.UserUtils;
-
 import java.util.Date;
-import java.util.UUID;
 
 public class User {
     //uuid
@@ -13,18 +9,11 @@ public class User {
     //用户密码的md5保存
     private String password;
     private String nickName;//显示昵称
-
     private Date createdTime;
 
-    public User(){
-    }
-
-    public User(UserRegisterRequestBean userRegisterBean){
-        this.setUserId(UserUtils.formatUserId());
-        this.setEmailAddress(userRegisterBean.emailAddress);
-        this.setPassword(userRegisterBean.password);
-        this.setNickName(userRegisterBean.nickName);
-    }
+    private String token;
+    private Date expiredTime;
+    private int status;//账号状态，是否无效  ConstUtils.ACCOUNT_STATUS_NORMAL
 
     public String getUserId() {
         return userId;
@@ -34,47 +23,73 @@ public class User {
         this.userId = userId;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public String getNickName() {
-        return nickName;
-    }
-
     public String getEmailAddress() {
         return emailAddress;
-    }
-
-//    public Date getCreatedTime() {
-//        return createdTime;
-//    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
     }
 
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
     }
 
-//    public void setCreatedTime(Date createdTime) {
-//        this.createdTime = createdTime;
-//    }
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public Date getExpiredTime() {
+        return expiredTime;
+    }
+
+    public void setExpiredTime(Date expiredTime) {
+        this.expiredTime = expiredTime;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
     @Override
     public String toString() {
         return "User{" +
                 ", userId='" + userId + '\'' +
+                ", emailAddress='" + emailAddress + '\'' +
                 ", password='" + password + '\'' +
                 ", nickName='" + nickName + '\'' +
-                ", emailAddress='" + emailAddress + '\'' +
-                ", createdTime='" + createdTime + '\'' +
-//                ", created='" + new SimpleDateFormat("yyyy-MM-dd").format(createdTime) + '\'' +
+                ", createdTime=" + createdTime +
+                ", token='" + token + '\'' +
+                ", expiredTime=" + expiredTime +
+                ", status=" + status +
                 '}';
     }
 }

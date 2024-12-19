@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- mapper:根标签，namespace：命名空间，随便写，一般保证命名空间唯一 -->
+<!--        CREATE TABLE master_user_table(-->
+<!--        user_id VARCHAR(32) NOT NULL,-->
+<!--        email_address VARCHAR(32) NOT NULL ,-->
+<!--        password VARCHAR(32) NOT NULL,-->
+<!--        nick_name VARCHAR(32) NOT NULL,-->
+<!--        created_time Date NOT NULL,-->
+<!--        token VARCHAR(32),-->
+<!--        expired_time Date,-->
+<!--        status INT-->
+<!--        PRIMARY KEY(user_id) -->
+<!--        UNIQUE(email_address) -->
+<!--        );-->
+
+<mapper namespace="com.jhf.beatpoker.web.dao.mapper.IMasterUserDao">
+    <insert id="insertUserFirstTime" parameterType="com.jhf.beatpoker.web.dao.entity.User">
+            INSERT IGNORE INTO master_user_table(user_id,email_address,password,nick_name,created_time,status)
+            VALUES(#{userId},#{emailAddress},#{password},#{nickName},#{createdTime},#{status})
+    </insert>
+
+    <update id="updateToken" parameterType="com.jhf.beatpoker.web.dao.entity.User">
+            UPDATE master_user_table
+            SET token = #{token}, expired_time = #{expiredTime}
+            WHERE user_id = #{userId}
+    </update>
+
+    <select id="selectUser" resultType="com.jhf.beatpoker.web.dao.entity.User">
+            SELECT *
+            FROM master_user_table
+            WHERE user_id = #{userId}
+    </select>
+
+    <update id="activeUser">
+            UPDATE master_user_table
+            SET status=#{status}
+            WHERE user_id = #{userId} AND status = 2
+    </update>
+</mapper>
