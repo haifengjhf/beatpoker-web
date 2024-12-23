@@ -11,6 +11,7 @@ public enum  EnumStatusCode implements StatusCode{
     FAILED_PASSWORD_WRONG_EXCEPTION(4006,"password error"),
     FAILED_USER_NOT_FOUND_EXCEPTION(4007,"user not found"),
     FAILED_TOKEN_EXPIRED_EXCEPTION(4008,"tokn expired"),
+    FAILED_ACCOUNT_EXISTS(4009,"account exist"),
     ;
 
     private int code;

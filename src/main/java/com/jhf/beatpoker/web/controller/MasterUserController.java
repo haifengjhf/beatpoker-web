@@ -4,12 +4,16 @@ import com.jhf.beatpoker.web.common.bean.LoginResultBean;
 import com.jhf.beatpoker.web.common.response.EnumStatusCode;
 import com.jhf.beatpoker.web.common.response.ResponseBody;
 import com.jhf.beatpoker.web.service.userregister.MasterUserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/MasterUser")
 public class MasterUserController {
+    private final Logger logger = LoggerFactory.getLogger("MasterUserService");
+
     private final MasterUserService userRegisterService;
 
     @Autowired
@@ -20,6 +24,8 @@ public class MasterUserController {
 
     @GetMapping(value = "/register")
     public ResponseBody<String> register(@RequestParam String emailAddress,@RequestParam String password,@RequestParam String nickName) {
+        logger.info("register emailAddress:{} password:{} nickName:{}",emailAddress,password,nickName);
+
         EnumStatusCode statusCode = userRegisterService.register(emailAddress,password,nickName);
 
         ResponseBody<String> responseBody = new ResponseBody<>();

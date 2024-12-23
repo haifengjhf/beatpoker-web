@@ -7,14 +7,18 @@ import com.jhf.beatpoker.web.common.utils.ConstUtils;
 import com.jhf.beatpoker.web.common.utils.UserUtils;
 import com.jhf.beatpoker.web.dao.entity.User;
 import com.jhf.beatpoker.web.dao.mapper.IMasterUserDao;
-import org.apache.tomcat.util.security.MD5Encoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 
 import java.util.Date;
 
 @Service
 public class MasterUserService {
+    private final Logger logger = LoggerFactory.getLogger("MasterUserService");
+    private final int TOKEN_VALID_TIME = 7 * 24 * 3600 * 1000;
     private final IMasterUserDao mMasterUserDaoImpl;
 
     @Autowired
@@ -23,7 +27,7 @@ public class MasterUserService {
     }
 
     public EnumStatusCode register(String emailAddress,String password,String nickName){
-        String userId = MD5Encoder.encode(emailAddress.getBytes());
+        String userId = DigestUtils.md5DigestAsHex(emailAddress.getBytes());
 
         User user = new User();
         user.setUserId(userId);
@@ -31,15 +35,16 @@ public class MasterUserService {
         user.setEmailAddress(emailAddress);
         user.setNickName(nickName);
         user.setCreatedTime(new Date());
-        user.setStatus(ConstUtils.ACCOUNT_STATUS_TO_BE_ACTIVATED);
+        user.setStatus(ConstUtils.ACCOUNT_STATUS_NORMAL);
 
-        mMasterUserDaoImpl.insertUserFirstTime(new User());
-        return EnumStatusCode.SUCCESS;
+        int result = mMasterUserDaoImpl.insertUserFirstTime(user);
+        logger.info("register user:{},result:{}", user,result);
+        return result == 1 ? EnumStatusCode.SUCCESS : EnumStatusCode.FAILED_ACCOUNT_EXISTS;
     }
 
     public ResponseBody<LoginResultBean> login(String emailAddress, String password){
         EnumStatusCode enumStatusCode = EnumStatusCode.SUCCESS;
-        String userId = MD5Encoder.encode(emailAddress.getBytes());
+        String userId = DigestUtils.md5DigestAsHex(emailAddress.getBytes());
         String newToken = UserUtils.formatToken(userId);
         User userInfo = mMasterUserDaoImpl.selectUser(userId);
         //check password
@@ -49,7 +54,7 @@ public class MasterUserService {
         else if(!userInfo.getPassword().equalsIgnoreCase(password)){
             enumStatusCode = EnumStatusCode.FAILED_PASSWORD_WRONG_EXCEPTION;
         }else{
-            Date expiredTime = new Date(System.currentTimeMillis() + 7 * 24 * 3600 * 1000);
+            Date expiredTime = new Date(System.currentTimeMillis() + TOKEN_VALID_TIME);
             User user = new User();
             user.setUserId(userId);
             user.setToken(newToken);
@@ -84,13 +89,21 @@ public class MasterUserService {
         else if(userInfo.getToken() == null || !userInfo.getToken().equalsIgnoreCase(token)){
             enumStatusCode = EnumStatusCode.FAILED_TOKEN_EXCEPTION;
         }else{
+            Date expiredTime = new Date(System.currentTimeMillis() + TOKEN_VALID_TIME);
+
             User userInfoUpdate = new User();
             userInfoUpdate.setUserId(userId);
             userInfoUpdate.setToken(newToken);
+            userInfoUpdate.setExpiredTime(expiredTime);
             mMasterUserDaoImpl.updateToken(userInfoUpdate);
+
+            return getLoginResultBeanResponseBody(enumStatusCode,userId,  newToken);
         }
 
-        return getLoginResultBeanResponseBody(enumStatusCode,userId,  newToken);
+        ResponseBody<LoginResultBean>  responseBody = new ResponseBody<>();
+        responseBody.code = enumStatusCode.getCode();
+        responseBody.message = enumStatusCode.getMessage();
+        return responseBody;
     }
 
     private ResponseBody<LoginResultBean> getLoginResultBeanResponseBody( EnumStatusCode enumStatusCode,String userId,String newToken) {

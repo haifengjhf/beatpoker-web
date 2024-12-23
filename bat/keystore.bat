@@ -1,0 +1,1 @@
+keytool -genkey -alias BeatPoker -dname "CN=haifengjin,OU=BeatPoker,O=BeatPoker,L=HZ,ST=ZJ,C=CN" -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore BeatPoker.keystore -keypass %kpBeatPoker -storepass %spBeatPoker -validity 3650

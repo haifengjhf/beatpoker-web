@@ -1,6 +1,6 @@
 package com.jhf.beatpoker.web.common.utils;
 
-import org.apache.tomcat.util.security.MD5Encoder;
+import org.springframework.util.DigestUtils;
 
 import java.util.Base64;
 import java.util.UUID;
@@ -15,7 +15,7 @@ public class UserUtils {
 
     public static String formatToken(String userId){
         String token = userId + SPLIT_TOKEN + System.currentTimeMillis();
-        return MD5Encoder.encode(token.getBytes()).toLowerCase();
+        return DigestUtils.md5DigestAsHex(token.getBytes()).toLowerCase();
     }
 
     public static String formatVerifyCode(String userId){
