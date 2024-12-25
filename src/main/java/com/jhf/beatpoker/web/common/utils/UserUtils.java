@@ -6,16 +6,21 @@ import java.util.Base64;
 import java.util.UUID;
 
 public class UserUtils {
-    private final static String SPLIT_TOKEN = "*_*";
+    private final static String SPLIT_TOKEN = "*-*";
     public final static int VERIFY_CODE_LENGTH = 6;
-    public static String formatUserId(){
-        String uuid = UUID.randomUUID().toString();
-        return Base64.getEncoder().encodeToString(uuid.getBytes()).toLowerCase();
-    }
 
     public static String formatToken(String userId){
         String token = userId + SPLIT_TOKEN + System.currentTimeMillis();
         return DigestUtils.md5DigestAsHex(token.getBytes()).toLowerCase();
+    }
+
+    public static String formatUserId(String emailAddress){
+        return DigestUtils.md5DigestAsHex(emailAddress.getBytes());
+    }
+
+    public static String formatDbPassword(String userId,String newPassword){
+        String tmp = userId + SPLIT_TOKEN + newPassword;
+        return DigestUtils.md5DigestAsHex(tmp.getBytes());
     }
 
     public static String formatVerifyCode(String userId){

@@ -22,9 +22,15 @@
             VALUES(#{userId},#{emailAddress},#{password},#{nickName},#{createdTime},#{status})
     </insert>
 
-    <update id="updateToken" parameterType="com.jhf.beatpoker.web.dao.entity.User">
+    <update id="updateToken">
             UPDATE master_user_table
             SET token = #{token}, expired_time = #{expiredTime}
+            WHERE user_id = #{userId}
+    </update>
+
+    <update id="updatePassword">
+            UPDATE master_user_table
+            SET password = #{password}
             WHERE user_id = #{userId}
     </update>
 

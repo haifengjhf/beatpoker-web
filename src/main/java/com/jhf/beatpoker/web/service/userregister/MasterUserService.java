@@ -4,6 +4,8 @@ import com.jhf.beatpoker.web.common.bean.LoginResultBean;
 import com.jhf.beatpoker.web.common.response.EnumStatusCode;
 import com.jhf.beatpoker.web.common.response.ResponseBody;
 import com.jhf.beatpoker.web.common.utils.ConstUtils;
+import com.jhf.beatpoker.web.common.utils.EmailUtils;
+import com.jhf.beatpoker.web.common.utils.RandomPasswordGenerator;
 import com.jhf.beatpoker.web.common.utils.UserUtils;
 import com.jhf.beatpoker.web.dao.entity.User;
 import com.jhf.beatpoker.web.dao.mapper.IMasterUserDao;
@@ -27,7 +29,7 @@ public class MasterUserService {
     }
 
     public EnumStatusCode register(String emailAddress,String password,String nickName){
-        String userId = DigestUtils.md5DigestAsHex(emailAddress.getBytes());
+        String userId = UserUtils.formatUserId(emailAddress);
 
         User user = new User();
         user.setUserId(userId);
@@ -44,7 +46,7 @@ public class MasterUserService {
 
     public ResponseBody<LoginResultBean> login(String emailAddress, String password){
         EnumStatusCode enumStatusCode = EnumStatusCode.SUCCESS;
-        String userId = DigestUtils.md5DigestAsHex(emailAddress.getBytes());
+        String userId = UserUtils.formatUserId(emailAddress);
         String newToken = UserUtils.formatToken(userId);
         User userInfo = mMasterUserDaoImpl.selectUser(userId);
         //check password
@@ -55,11 +57,7 @@ public class MasterUserService {
             enumStatusCode = EnumStatusCode.FAILED_PASSWORD_WRONG_EXCEPTION;
         }else{
             Date expiredTime = new Date(System.currentTimeMillis() + TOKEN_VALID_TIME);
-            User user = new User();
-            user.setUserId(userId);
-            user.setToken(newToken);
-            user.setExpiredTime(expiredTime);
-            mMasterUserDaoImpl.updateToken(user);
+            mMasterUserDaoImpl.updateToken(userId,newToken,expiredTime);
         }
         return getLoginResultBeanResponseBody(enumStatusCode,userId, newToken);
     }
@@ -71,7 +69,7 @@ public class MasterUserService {
             enumStatusCode = EnumStatusCode.FAILED_USER_NOT_FOUND_EXCEPTION;
         }
         else if(userInfo.getToken() == null || !userInfo.getToken().equalsIgnoreCase(token)){
-            enumStatusCode = EnumStatusCode.FAILED_TOKEN_EXCEPTION;
+            enumStatusCode = EnumStatusCode.FAILED_TOKEN_ERROR_EXCEPTION;
         }
         else if(userInfo.getExpiredTime().before(new Date())){
             enumStatusCode = EnumStatusCode.FAILED_TOKEN_EXPIRED_EXCEPTION;
@@ -87,15 +85,11 @@ public class MasterUserService {
             enumStatusCode = EnumStatusCode.FAILED_USER_NOT_FOUND_EXCEPTION;
         }
         else if(userInfo.getToken() == null || !userInfo.getToken().equalsIgnoreCase(token)){
-            enumStatusCode = EnumStatusCode.FAILED_TOKEN_EXCEPTION;
+            enumStatusCode = EnumStatusCode.FAILED_TOKEN_ERROR_EXCEPTION;
         }else{
             Date expiredTime = new Date(System.currentTimeMillis() + TOKEN_VALID_TIME);
 
-            User userInfoUpdate = new User();
-            userInfoUpdate.setUserId(userId);
-            userInfoUpdate.setToken(newToken);
-            userInfoUpdate.setExpiredTime(expiredTime);
-            mMasterUserDaoImpl.updateToken(userInfoUpdate);
+            mMasterUserDaoImpl.updateToken(userId,newToken,expiredTime);
 
             return getLoginResultBeanResponseBody(enumStatusCode,userId,  newToken);
         }
@@ -104,6 +98,47 @@ public class MasterUserService {
         responseBody.code = enumStatusCode.getCode();
         responseBody.message = enumStatusCode.getMessage();
         return responseBody;
+    }
+
+    public EnumStatusCode changePassword(String userId,String token,String newPassword){
+        EnumStatusCode enumStatusCode = EnumStatusCode.SUCCESS;
+        User userInfo = mMasterUserDaoImpl.selectUser(userId);
+        if(userInfo == null){
+            enumStatusCode = EnumStatusCode.FAILED_USER_NOT_FOUND_EXCEPTION;
+        }
+        else if(userInfo.getToken() == null || !userInfo.getToken().equalsIgnoreCase(token)){
+            enumStatusCode = EnumStatusCode.FAILED_TOKEN_ERROR_EXCEPTION;
+        }
+        else if(userInfo.getExpiredTime() == null || !userInfo.getExpiredTime().after(new Date())){
+            enumStatusCode = EnumStatusCode.FAILED_TOKEN_EXPIRED_EXCEPTION;
+        }
+        else{
+            mMasterUserDaoImpl.updatePassword(userId,newPassword);
+        }
+        return enumStatusCode;
+    }
+
+    public EnumStatusCode resetPassword(String emailAddress){
+        EnumStatusCode enumStatusCode = EnumStatusCode.SUCCESS;
+        String userId = UserUtils.formatUserId(emailAddress);
+        User userInfo = mMasterUserDaoImpl.selectUser(userId);
+        if(userInfo == null){
+            enumStatusCode = EnumStatusCode.FAILED_USER_NOT_FOUND_EXCEPTION;
+        }
+        else if(!EmailUtils.isValidEmail(emailAddress)){
+            enumStatusCode = EnumStatusCode.FAILED_EMAIL_FORMAT_ERROR;
+        }
+        else{
+            String randomPassword = RandomPasswordGenerator.generateRandomPassword(6);
+            String dbPassword = UserUtils.formatDbPassword(userId,randomPassword);
+            int result = mMasterUserDaoImpl.updatePassword(userId,dbPassword);
+            if(result == 0){
+                enumStatusCode = EnumStatusCode.FAILED_DATE_UPDATE_PASSWORD_ERROR;
+            }else{
+                enumStatusCode = EmailUtils.sendResetPasswordEmail(emailAddress,randomPassword);
+            }
+        }
+        return enumStatusCode;
     }
 
     private ResponseBody<LoginResultBean> getLoginResultBeanResponseBody( EnumStatusCode enumStatusCode,String userId,String newToken) {
