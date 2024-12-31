@@ -2,7 +2,7 @@ package com.jhf.beatpoker.web.dao.entity;
 
 import java.util.Date;
 
-public class User {
+public class MasterUser {
     //uuid
     private String userId;
     private String emailAddress;//邮箱地址
@@ -81,7 +81,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" +
+        return "MasterUser{" +
                 "userId='" + userId + '\'' +
                 ", emailAddress='" + emailAddress + '\'' +
                 ", password='" + password + '\'' +

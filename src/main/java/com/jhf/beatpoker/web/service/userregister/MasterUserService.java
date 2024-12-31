@@ -3,17 +3,13 @@ package com.jhf.beatpoker.web.service.userregister;
 import com.jhf.beatpoker.web.common.bean.LoginResultBean;
 import com.jhf.beatpoker.web.common.response.EnumStatusCode;
 import com.jhf.beatpoker.web.common.response.ResponseBody;
-import com.jhf.beatpoker.web.common.utils.ConstUtils;
-import com.jhf.beatpoker.web.common.utils.EmailUtils;
-import com.jhf.beatpoker.web.common.utils.RandomPasswordGenerator;
-import com.jhf.beatpoker.web.common.utils.UserUtils;
-import com.jhf.beatpoker.web.dao.entity.User;
+import com.jhf.beatpoker.web.common.utils.*;
+import com.jhf.beatpoker.web.dao.entity.MasterUser;
 import com.jhf.beatpoker.web.dao.mapper.IMasterUserDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.DigestUtils;
 
 import java.util.Date;
 
@@ -29,31 +25,37 @@ public class MasterUserService {
     }
 
     public EnumStatusCode register(String emailAddress,String password,String nickName){
+        if(TextUtils.isEmpty(emailAddress) || TextUtils.isEmpty(password) || TextUtils.isEmpty(nickName)){
+            return EnumStatusCode.FAILED_PARAMETER_EMPTY_ERROR;
+        }
         String userId = UserUtils.formatUserId(emailAddress);
 
-        User user = new User();
-        user.setUserId(userId);
-        user.setPassword(password);
-        user.setEmailAddress(emailAddress);
-        user.setNickName(nickName);
-        user.setCreatedTime(new Date());
-        user.setStatus(ConstUtils.ACCOUNT_STATUS_NORMAL);
+        MasterUser masterUser = new MasterUser();
+        masterUser.setUserId(userId);
+        masterUser.setPassword(password);
+        masterUser.setEmailAddress(emailAddress);
+        masterUser.setNickName(nickName);
+        masterUser.setCreatedTime(new Date());
+        masterUser.setStatus(ConstUtils.ACCOUNT_STATUS_NORMAL);
 
-        int result = mMasterUserDaoImpl.insertUserFirstTime(user);
-        logger.info("register user:{},result:{}", user,result);
+        int result = mMasterUserDaoImpl.insertUserFirstTime(masterUser);
+        logger.info("register user:{},result:{}", masterUser,result);
         return result == 1 ? EnumStatusCode.SUCCESS : EnumStatusCode.FAILED_ACCOUNT_EXISTS;
     }
 
     public ResponseBody<LoginResultBean> login(String emailAddress, String password){
+        if(TextUtils.isEmpty(emailAddress) || TextUtils.isEmpty(password)){
+            return new ResponseBody(EnumStatusCode.FAILED_PARAMETER_EMPTY_ERROR);
+        }
         EnumStatusCode enumStatusCode = EnumStatusCode.SUCCESS;
         String userId = UserUtils.formatUserId(emailAddress);
         String newToken = UserUtils.formatToken(userId);
-        User userInfo = mMasterUserDaoImpl.selectUser(userId);
+        MasterUser masterUserInfo = mMasterUserDaoImpl.selectUser(userId);
         //check password
-        if(userInfo == null){
+        if(masterUserInfo == null){
             enumStatusCode = EnumStatusCode.FAILED_USER_NOT_FOUND_EXCEPTION;
         }
-        else if(!userInfo.getPassword().equalsIgnoreCase(password)){
+        else if(!masterUserInfo.getPassword().equalsIgnoreCase(password)){
             enumStatusCode = EnumStatusCode.FAILED_PASSWORD_WRONG_EXCEPTION;
         }else{
             Date expiredTime = new Date(System.currentTimeMillis() + TOKEN_VALID_TIME);
@@ -63,28 +65,21 @@ public class MasterUserService {
     }
 
     public EnumStatusCode loginWithToken(String userId,String token){
-        EnumStatusCode enumStatusCode = EnumStatusCode.SUCCESS;
-        User userInfo = mMasterUserDaoImpl.selectUser(userId);
-        if(userInfo == null){
-            enumStatusCode = EnumStatusCode.FAILED_USER_NOT_FOUND_EXCEPTION;
-        }
-        else if(userInfo.getToken() == null || !userInfo.getToken().equalsIgnoreCase(token)){
-            enumStatusCode = EnumStatusCode.FAILED_TOKEN_ERROR_EXCEPTION;
-        }
-        else if(userInfo.getExpiredTime().before(new Date())){
-            enumStatusCode = EnumStatusCode.FAILED_TOKEN_EXPIRED_EXCEPTION;
-        }
-        return enumStatusCode;
+        return isUserLoginValid(userId,token);
     }
 
     public ResponseBody<LoginResultBean> refreshToken(String userId,String token){
         EnumStatusCode enumStatusCode = EnumStatusCode.SUCCESS;
-        User userInfo = mMasterUserDaoImpl.selectUser(userId);
+        if(TextUtils.isEmpty(userId) || TextUtils.isEmpty(token)){
+            return new ResponseBody(EnumStatusCode.FAILED_PARAMETER_EMPTY_ERROR);
+        }
+
+        MasterUser masterUserInfo = mMasterUserDaoImpl.selectUser(userId);
         String newToken = UserUtils.formatToken(userId);
-        if(userInfo == null){
+        if(masterUserInfo == null){
             enumStatusCode = EnumStatusCode.FAILED_USER_NOT_FOUND_EXCEPTION;
         }
-        else if(userInfo.getToken() == null || !userInfo.getToken().equalsIgnoreCase(token)){
+        else if(masterUserInfo.getToken() == null || !masterUserInfo.getToken().equalsIgnoreCase(token)){
             enumStatusCode = EnumStatusCode.FAILED_TOKEN_ERROR_EXCEPTION;
         }else{
             Date expiredTime = new Date(System.currentTimeMillis() + TOKEN_VALID_TIME);
@@ -102,27 +97,31 @@ public class MasterUserService {
 
     public EnumStatusCode changePassword(String userId,String token,String newPassword){
         EnumStatusCode enumStatusCode = EnumStatusCode.SUCCESS;
-        User userInfo = mMasterUserDaoImpl.selectUser(userId);
-        if(userInfo == null){
-            enumStatusCode = EnumStatusCode.FAILED_USER_NOT_FOUND_EXCEPTION;
+        if(TextUtils.isEmpty(userId) || TextUtils.isEmpty(token) || TextUtils.isEmpty(newPassword)){
+            return EnumStatusCode.FAILED_PARAMETER_EMPTY_ERROR;
         }
-        else if(userInfo.getToken() == null || !userInfo.getToken().equalsIgnoreCase(token)){
-            enumStatusCode = EnumStatusCode.FAILED_TOKEN_ERROR_EXCEPTION;
-        }
-        else if(userInfo.getExpiredTime() == null || !userInfo.getExpiredTime().after(new Date())){
-            enumStatusCode = EnumStatusCode.FAILED_TOKEN_EXPIRED_EXCEPTION;
+        enumStatusCode = isUserLoginValid(userId,token);
+        if(enumStatusCode != EnumStatusCode.SUCCESS){
+            return enumStatusCode;
         }
         else{
-            mMasterUserDaoImpl.updatePassword(userId,newPassword);
+            int result = mMasterUserDaoImpl.updatePassword(userId,newPassword);
+            if(result != 1){
+                enumStatusCode = EnumStatusCode.FAILED_DB_UPDATE_PASSWORD_ERROR;
+            }
         }
         return enumStatusCode;
     }
 
     public EnumStatusCode resetPassword(String emailAddress){
         EnumStatusCode enumStatusCode = EnumStatusCode.SUCCESS;
+        if(TextUtils.isEmpty(emailAddress)){
+            return EnumStatusCode.FAILED_PARAMETER_EMPTY_ERROR;
+        }
+
         String userId = UserUtils.formatUserId(emailAddress);
-        User userInfo = mMasterUserDaoImpl.selectUser(userId);
-        if(userInfo == null){
+        MasterUser masterUserInfo = mMasterUserDaoImpl.selectUser(userId);
+        if(masterUserInfo == null){
             enumStatusCode = EnumStatusCode.FAILED_USER_NOT_FOUND_EXCEPTION;
         }
         else if(!EmailUtils.isValidEmail(emailAddress)){
@@ -133,10 +132,41 @@ public class MasterUserService {
             String dbPassword = UserUtils.formatDbPassword(userId,randomPassword);
             int result = mMasterUserDaoImpl.updatePassword(userId,dbPassword);
             if(result == 0){
-                enumStatusCode = EnumStatusCode.FAILED_DATE_UPDATE_PASSWORD_ERROR;
+                enumStatusCode = EnumStatusCode.FAILED_DB_UPDATE_PASSWORD_ERROR;
             }else{
                 enumStatusCode = EmailUtils.sendResetPasswordEmail(emailAddress,randomPassword);
             }
+        }
+        return enumStatusCode;
+    }
+
+    public EnumStatusCode changeNickName(String userId,String token,String newNickName){
+        if(TextUtils.isEmpty(userId) || TextUtils.isEmpty(token) || TextUtils.isEmpty(newNickName)){
+            return EnumStatusCode.FAILED_PARAMETER_EMPTY_ERROR;
+        }
+        EnumStatusCode enumStatusCode = isUserLoginValid(userId,token);
+        if(enumStatusCode != EnumStatusCode.SUCCESS){
+            return enumStatusCode;
+        }
+        int result = mMasterUserDaoImpl.updateNickName(userId,newNickName);
+        return result == 1 ? EnumStatusCode.SUCCESS : EnumStatusCode.FAILED_DB_UPDATE_NICKNAME_ERROR;
+    }
+
+    public EnumStatusCode isUserLoginValid(String userId,String token){
+        EnumStatusCode enumStatusCode = EnumStatusCode.SUCCESS;
+        if(TextUtils.isEmpty(userId) || TextUtils.isEmpty(token)){
+            return EnumStatusCode.FAILED_PARAMETER_EMPTY_ERROR;
+        }
+        MasterUser masterUserInfo = mMasterUserDaoImpl.selectUser(userId);
+        logger.debug("isUserLoginValid userInfo:{},userId:{},token:{}", masterUserInfo,userId,token);
+        if(masterUserInfo == null ){
+            enumStatusCode = EnumStatusCode.FAILED_USER_NOT_FOUND_EXCEPTION;
+        }
+        else if(masterUserInfo.getToken() == null || !masterUserInfo.getToken().equalsIgnoreCase(token)){
+            enumStatusCode = EnumStatusCode.FAILED_TOKEN_ERROR_EXCEPTION;
+        }
+        else if(masterUserInfo.getExpiredTime() == null || masterUserInfo.getExpiredTime().before(new Date())){
+            enumStatusCode = EnumStatusCode.FAILED_TOKEN_EXPIRED_EXCEPTION;
         }
         return enumStatusCode;
     }

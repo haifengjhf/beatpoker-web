@@ -1,9 +1,7 @@
 package com.jhf.beatpoker.web.service.helloworld;
 
 import com.jhf.beatpoker.web.common.bean.HelloBean;
-import com.jhf.beatpoker.web.dao.entity.User;
-import com.jhf.beatpoker.web.dao.mapper.ITestDao;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.jhf.beatpoker.web.dao.entity.MasterUser;
 import org.springframework.stereotype.Service;
 
 @Service("TestService")
@@ -22,14 +20,14 @@ public class TestServiceImpl implements ITestService {
     @Override
     public HelloBean test() {
         HelloBean helloBean = new HelloBean();
-        User user = null;
+        MasterUser masterUser = null;
 //        User user = mTestData.queryUserByUserId("defaultId");
-        if(user == null){
+        if(masterUser == null){
             return helloBean;
         }
-        System.out.println(user.toString());
-        helloBean.id = user.getUserId();
-        helloBean.name = user.getNickName();
+        System.out.println(masterUser.toString());
+        helloBean.id = masterUser.getUserId();
+        helloBean.name = masterUser.getNickName();
         return helloBean;
     }
 }

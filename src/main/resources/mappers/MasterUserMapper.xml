@@ -17,7 +17,7 @@
 <!--        );-->
 
 <mapper namespace="com.jhf.beatpoker.web.dao.mapper.IMasterUserDao">
-    <insert id="insertUserFirstTime" parameterType="com.jhf.beatpoker.web.dao.entity.User">
+    <insert id="insertUserFirstTime" parameterType="com.jhf.beatpoker.web.dao.entity.MasterUser">
             INSERT IGNORE INTO master_user_table(user_id,email_address,password,nick_name,created_time,status)
             VALUES(#{userId},#{emailAddress},#{password},#{nickName},#{createdTime},#{status})
     </insert>
@@ -34,7 +34,7 @@
             WHERE user_id = #{userId}
     </update>
 
-    <select id="selectUser" resultType="com.jhf.beatpoker.web.dao.entity.User">
+    <select id="selectUser" resultType="com.jhf.beatpoker.web.dao.entity.MasterUser">
             SELECT *
             FROM master_user_table
             WHERE user_id = #{userId}
@@ -44,5 +44,11 @@
             UPDATE master_user_table
             SET status=#{status}
             WHERE user_id = #{userId} AND status = 2
+    </update>
+
+    <update id="updateNickName">
+            UPDATE master_user_table
+            SET nick_name=#{nickName}
+            WHERE user_id = #{userId}
     </update>
 </mapper>

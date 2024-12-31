@@ -1,6 +1,6 @@
 package com.jhf.beatpoker.web.dao.mapper;
 
-import com.jhf.beatpoker.web.dao.entity.User;
+import com.jhf.beatpoker.web.dao.entity.MasterUser;
 
 import java.util.List;
 
@@ -11,28 +11,28 @@ public interface ITestDao {
      * @param userId
      * @return
      */
-    public User queryUserByUserId(String userId);
+    public MasterUser queryUserByUserId(String userId);
 
     /**
      * 查询所有用户信息
      *
      * @return
      */
-    public List<User> queryUserAll();
+    public List<MasterUser> queryUserAll();
 
     /**
      * 新增用户
      *
-     * @param user
+     * @param masterUser
      */
-    public void insertUser(User user);
+    public void insertUser(MasterUser masterUser);
 
     /**
      * 更新用户信息
      *
-     * @param user
+     * @param masterUser
      */
-    public void updateUser(User user);
+    public void updateUser(MasterUser masterUser);
 
     /**
      * 根据id删除用户信息

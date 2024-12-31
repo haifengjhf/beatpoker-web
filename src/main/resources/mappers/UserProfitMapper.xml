@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--CREATE TABLE IF NOT EXISTS user_profit(-->
+<!--user_id VARCHAR(32) NOT NULL,-->
+<!--last_update_time DATETIME,-->
+<!--score INT,-->
+<!--PRIMARY KEY(user_id)-->
+<!--);-->
+
+<mapper namespace="com.jhf.beatpoker.web.dao.mapper.IUserProfitDao">
+
+    <insert id="updateProfit">
+            INSERT INTO user_profit_table (user_id, last_update_time, score)
+            VALUES(#{userId}, #{lastUpdateTime}, #{diffScore})
+            ON DUPLICATE KEY
+            UPDATE score = score + #{diffScore}, last_update_time = #{lastUpdateTime}
+    </insert>
+
+    <select id="getTopN" resultType="com.jhf.beatpoker.web.common.bean.UserProfitBean">
+            SELECT user_profit_table.user_id,user_profit_table.last_update_time,user_profit_table.score,master_user_table.nick_name
+            FROM user_profit_table
+            LEFT JOIN master_user_table ON user_profit_table.user_id = master_user_table.user_id
+            order by score desc limit #{topN}
+    </select>
+
+<!--    <resultMap id="UserProfitBean" type="com.jhf.beatpoker.web.common.bean.UserProfitBean">-->
+<!--        <id property="userId" column="user_id"/>-->
+<!--        <result property="lastUpdateTime" column="last_update_time"/>-->
+<!--        <result property="score" column="score"/>-->
+<!--        <result property="nickName" column="nick_name" />-->
+<!--    </resultMap>-->
+
+</mapper>

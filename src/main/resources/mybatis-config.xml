@@ -54,6 +54,7 @@
     <mappers>
         <mapper resource="mappers/TestMapper.xml"/>
         <mapper resource="mappers/MasterUserMapper.xml"/>
+        <mapper resource="mappers/UserProfitMapper.xml"/>
     </mappers>
 
 </configuration>

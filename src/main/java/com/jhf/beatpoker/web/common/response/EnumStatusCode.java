@@ -10,11 +10,15 @@ public enum  EnumStatusCode implements StatusCode{
     FAILED_LEADER_BOARD_EMPTY(4005,"leaderboard empty"),
     FAILED_PASSWORD_WRONG_EXCEPTION(4006,"password error"),
     FAILED_USER_NOT_FOUND_EXCEPTION(4007,"user not found"),
-    FAILED_TOKEN_EXPIRED_EXCEPTION(4008,"login expired"),
+    FAILED_TOKEN_EXPIRED_EXCEPTION(4008,"token expired"),
     FAILED_ACCOUNT_EXISTS(4009,"account exist"),
     FAILED_EMAIL_FORMAT_ERROR(4010,"email format error"),
     FAILED_EMAIL_SEND_ERROR(4011,"email send error"),
-    FAILED_DATE_UPDATE_PASSWORD_ERROR(4012,"db update password error"),
+    FAILED_DB_UPDATE_PASSWORD_ERROR(4012,"db update password error"),
+    FAILED_DB_UPDATE_SCORE_ERROR(4012,"db update score error"),
+    FAILED_DB_UPDATE_NICKNAME_ERROR(4013,"db update nickname error"),
+    FAILED_NICKNAME_EMPTY_ERROR(4013,"nickname empty error"),
+    FAILED_PARAMETER_EMPTY_ERROR(4014,"parameter empty error"),
     ;
 
     private int code;

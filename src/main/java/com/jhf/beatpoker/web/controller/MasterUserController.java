@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/MasterUser")
+@RequestMapping("/masterUser")
 public class MasterUserController {
     private final Logger logger = LoggerFactory.getLogger("MasterUserService");
 
@@ -36,19 +36,19 @@ public class MasterUserController {
     }
 
     @GetMapping(value = "/loginWithToken")
-    public ResponseBody<String> loginWithToken(@RequestParam String userId, @RequestParam String token) {
+    public ResponseBody<String> loginWithToken(@RequestParam String userId, @RequestHeader("token") String token) {
         EnumStatusCode statusCode = userRegisterService.loginWithToken(userId,token);
 
         return new ResponseBody<>(statusCode);
     }
 
     @GetMapping(value = "/refreshToken")
-    public ResponseBody<LoginResultBean> refreshToken(String userId,String token){
+    public ResponseBody<LoginResultBean> refreshToken(String userId,@RequestHeader("token") String token){
         return userRegisterService.refreshToken(userId,token);
     }
 
     @GetMapping(value = "/changePassword")
-    public ResponseBody<String> changePassword(String userId,String token,String newPassword){
+    public ResponseBody<String> changePassword(String userId,@RequestHeader("token") String token,String newPassword){
         EnumStatusCode statusCode = userRegisterService.changePassword(userId,token,newPassword);
         return new ResponseBody<>(statusCode);
     }
@@ -56,6 +56,12 @@ public class MasterUserController {
     @GetMapping(value = "/resetPassword")
     public ResponseBody<String> resetPassword(String emailAddress){
         EnumStatusCode statusCode = userRegisterService.resetPassword(emailAddress);
+        return new ResponseBody<>(statusCode);
+    }
+
+    @GetMapping(value = "/changeNickName")
+    public ResponseBody<String> changeNickName(String userId,@RequestHeader("token") String token,String newNickName){
+        EnumStatusCode statusCode = userRegisterService.changeNickName(userId,token,newNickName);
         return new ResponseBody<>(statusCode);
     }
 
