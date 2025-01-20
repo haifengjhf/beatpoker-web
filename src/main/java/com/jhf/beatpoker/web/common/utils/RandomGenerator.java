@@ -2,7 +2,7 @@ package com.jhf.beatpoker.web.common.utils;
 
 import java.security.SecureRandom;
 
-public class RandomPasswordGenerator {
+public class RandomGenerator {
     private static final String CHAR_LOWER = "abcdefghijklmnopqrstuvwxyz";
     private static final String CHAR_UPPER = CHAR_LOWER.toUpperCase();
     private static final String NUMBER = "0123456789";
@@ -10,7 +10,7 @@ public class RandomPasswordGenerator {
 //    private static final String ALL_CHARS = CHAR_LOWER + CHAR_UPPER + NUMBER + SPECIAL_CHARS;
     private static final String ALL_CHARS = CHAR_LOWER + CHAR_UPPER + NUMBER;
 
-    public static String generateRandomPassword(int length) {
+    public static String generateRandom(int length) {
         SecureRandom random = new SecureRandom();
 
         StringBuilder sb = new StringBuilder(length);
@@ -18,6 +18,19 @@ public class RandomPasswordGenerator {
         for (int i = 0; i < length; i++) {
             int randomIndex = random.nextInt(ALL_CHARS.length());
             sb.append(ALL_CHARS.charAt(randomIndex));
+        }
+
+        return sb.toString();
+    }
+
+    public static String generateNumberRandom(int length) {
+        SecureRandom random = new SecureRandom();
+
+        StringBuilder sb = new StringBuilder(length);
+
+        for (int i = 0; i < length; i++) {
+            int randomIndex = random.nextInt(NUMBER.length());
+            sb.append(NUMBER.charAt(randomIndex));
         }
 
         return sb.toString();

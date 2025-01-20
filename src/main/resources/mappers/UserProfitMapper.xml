@@ -16,14 +16,27 @@
             INSERT INTO user_profit_table (user_id, last_update_time, score)
             VALUES(#{userId}, #{lastUpdateTime}, #{diffScore})
             ON DUPLICATE KEY
-            UPDATE score = score + #{diffScore}, last_update_time = #{lastUpdateTime}
+            UPDATE score = CASE WHEN score + #{diffScore} &lt; 0 THEN 0 ELSE score + #{diffScore} END , last_update_time = #{lastUpdateTime}
     </insert>
 
     <select id="getTopN" resultType="com.jhf.beatpoker.web.common.bean.UserProfitBean">
             SELECT user_profit_table.user_id,user_profit_table.last_update_time,user_profit_table.score,master_user_table.nick_name
             FROM user_profit_table
             LEFT JOIN master_user_table ON user_profit_table.user_id = master_user_table.user_id
-            order by score desc limit #{topN}
+            WHERE score > 0
+            ORDER BY score DESC limit #{topN}
+    </select>
+
+<!--    <select id="getUserProfit" resultType="com.jhf.beatpoker.web.common.bean.UserProfitBean">-->
+<!--            SELECT user_profit_table.user_id,user_profit_table.last_update_time,user_profit_table.score,master_user_table.nick_name,(SELECT COUNT(*) FROM user_profit_table t2 WHERE t2.score > user_profit_table.score) + 1-->
+<!--            FROM user_profit_table-->
+<!--    </select>-->
+
+    <select id="getUserProfit" resultType="com.jhf.beatpoker.web.common.bean.UserProfitBean">
+            SELECT user_profit_table.user_id,user_profit_table.last_update_time,user_profit_table.score,master_user_table.nick_name,(SELECT COUNT(*) FROM user_profit_table t2 WHERE t2.score > user_profit_table.score) + 1 AS ranking
+            FROM user_profit_table
+            LEFT JOIN master_user_table ON user_profit_table.user_id = master_user_table.user_id
+            WHERE user_profit_table.user_id = #{userId}
     </select>
 
 <!--    <resultMap id="UserProfitBean" type="com.jhf.beatpoker.web.common.bean.UserProfitBean">-->

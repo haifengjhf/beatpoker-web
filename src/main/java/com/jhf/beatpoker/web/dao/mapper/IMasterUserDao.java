@@ -1,17 +1,17 @@
 package com.jhf.beatpoker.web.dao.mapper;
 
-import com.jhf.beatpoker.web.dao.entity.MasterUser;
+import com.jhf.beatpoker.web.dao.entity.MasterUserRow;
 
 import java.util.Date;
 
 public interface IMasterUserDao {
-    int insertUserFirstTime(MasterUser masterUser);
+    int insertUserFirstTime(MasterUserRow masterUser);
 
     int updateToken(String userId, String token, Date expiredTime);
 
     int updatePassword(String userId,String password);
 
-    MasterUser selectUser(String userId);
+    MasterUserRow selectUser(String userId);
 
     int activeUser(String userId);
 

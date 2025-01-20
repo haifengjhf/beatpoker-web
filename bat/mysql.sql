@@ -22,13 +22,13 @@ CREATE TABLE IF NOT EXISTS user_profit_table(
     PRIMARY KEY(user_id)
 );
 
-# DROP PROCEDURE IF EXISTS user_profit_init_data;
-# CREATE PROCEDURE user_profit_init_data()
-# BEGIN
-#     DECLARE i BIGINT DEFAULT 1;
-#     WHILE i < 1000 DO
-#         INSERT INTO user_profit value("i",CURRENT_DATE(),i);
-#         SET i = i + 1;
-#     END WHILE;
-# END;
-# call user_profit_init_data();
+CREATE TABLE IF NOT EXISTS password_reset_table(
+    email_address VARCHAR(32) NOT NULL,
+    expired_time DATETIME,
+    verification_code VARCHAR(32) NOT NULL,
+    PRIMARY KEY(email_address)
+);
+
+DESC master_user_table;
+DESC user_profit_table;
+DESC password_reset_table;

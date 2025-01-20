@@ -1,17 +1,14 @@
 package com.jhf.beatpoker.web.service.profit;
 
-import com.jhf.beatpoker.web.common.bean.UserProfitBean;
+import com.jhf.beatpoker.web.common.bean.ProfitListDataBean;
 import com.jhf.beatpoker.web.common.response.EnumStatusCode;
-import com.jhf.beatpoker.web.common.response.ResponseBody;
 import com.jhf.beatpoker.web.common.utils.TextUtils;
-import com.jhf.beatpoker.web.dao.entity.UserProfit;
 import com.jhf.beatpoker.web.dao.mapper.IUserProfitDao;
 import com.jhf.beatpoker.web.service.userregister.MasterUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.List;
 
 @Service
 public class UserProfitService {
@@ -40,10 +37,11 @@ public class UserProfitService {
         return result == 1 || result == 2 ? EnumStatusCode.SUCCESS : EnumStatusCode.FAILED_DB_UPDATE_SCORE_ERROR;
     }
 
-    public List<UserProfitBean> getTopProfit(int topN){
-        if(topN < TOP_NUMBER_MIN || topN > TOP_NUMBER_MAX) topN = TOP_NUMBER_MAX;
-        List<UserProfitBean> userProfitList = userProfitDao.getTopN(topN);
-        return userProfitList ;
+    public ProfitListDataBean getTopProfit(int topN,String curUserId){
+        if(topN < TOP_NUMBER_MIN || topN > TOP_NUMBER_MAX) {
+            topN = TOP_NUMBER_MAX;
+        }
+        return new ProfitListDataBean(userProfitDao.getTopN(topN),userProfitDao.getUserProfit(curUserId));
     }
 
 }

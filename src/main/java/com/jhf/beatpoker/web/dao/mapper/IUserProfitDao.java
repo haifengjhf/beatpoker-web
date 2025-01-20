@@ -9,4 +9,6 @@ public interface IUserProfitDao {
     int updateProfit(String userId, Date lastUpdateTime, int diffScore);
 
     List<UserProfitBean> getTopN(int topN);
+
+    UserProfitBean getUserProfit(String userId);
 }

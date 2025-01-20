@@ -19,13 +19,14 @@ public enum  EnumStatusCode implements StatusCode{
     FAILED_DB_UPDATE_NICKNAME_ERROR(4013,"db update nickname error"),
     FAILED_NICKNAME_EMPTY_ERROR(4013,"nickname empty error"),
     FAILED_PARAMETER_EMPTY_ERROR(4014,"parameter empty error"),
+    FAILED_RESET_VERIFICATION_CODE_ERROR(4015,"verification code error"),
     ;
 
     private int code;
     private String message;
 
 
-    private EnumStatusCode(int code,String message){
+    EnumStatusCode(int code,String message){
         this.code = code;
         this.message = message;
     }

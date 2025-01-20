@@ -1,9 +1,11 @@
 package com.jhf.beatpoker.web.dao.entity;
 
+
 import java.util.Date;
 
-public class UserProfit {
+public class UserProfitRow {
     private String userId;
+
     private Date lastUpdateTime;
     private long score;
 

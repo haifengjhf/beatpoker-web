@@ -9,8 +9,8 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.jhf.beatpoker.web</groupId>
-    <artifactId>app</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>beatpoker-web</artifactId>
+    <version>0.0.1</version>
     <name>app</name>
     <description>Beatpoker web project for Spring Boot</description>
     <properties>

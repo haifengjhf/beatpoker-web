@@ -55,6 +55,7 @@
         <mapper resource="mappers/TestMapper.xml"/>
         <mapper resource="mappers/MasterUserMapper.xml"/>
         <mapper resource="mappers/UserProfitMapper.xml"/>
+        <mapper resource="mappers/PasswordResetMapper.xml"/>
     </mappers>
 
 </configuration>

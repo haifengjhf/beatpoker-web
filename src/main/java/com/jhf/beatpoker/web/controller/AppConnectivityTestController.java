@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/connectivityTest")
 public class AppConnectivityTestController {
 
-    @GetMapping(value = "/ping")
+    @GetMapping("/ping")
     public ResponseBody<String> knock() {
         return new ResponseBody<>(EnumStatusCode.SUCCESS);
     }

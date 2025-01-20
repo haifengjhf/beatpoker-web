@@ -2,13 +2,14 @@ package com.jhf.beatpoker.web.dao.entity;
 
 import java.util.Date;
 
-public class MasterUser {
+public class MasterUserRow {
     //uuid
     private String userId;
     private String emailAddress;//邮箱地址
     //用户密码的md5保存
     private String password;
     private String nickName;//显示昵称
+
     private Date createdTime;
 
     private String token;

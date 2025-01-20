@@ -17,8 +17,8 @@ public class HelloWorld {
         mTestService = testService;
     }
 
-    @RequestMapping("/helloworld")
-    public ResponseBody HelloWorld(){
+    @RequestMapping("/helloWorld")
+    public ResponseBody helloWorld(){
         return new ResponseBody();
     }
 

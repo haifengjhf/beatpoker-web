@@ -7,6 +7,7 @@ public class UserProfitBean {
     private String nickName;
     private Date lastUpdateTime;
     private long score;
+    private int ranking;
 
     public String getUserId() {
         return userId;
@@ -38,5 +39,14 @@ public class UserProfitBean {
 
     public void setScore(long score) {
         this.score = score;
+    }
+
+
+    public int getRanking() {
+        return ranking;
+    }
+
+    public void setRanking(int ranking) {
+        this.ranking = ranking;
     }
 }

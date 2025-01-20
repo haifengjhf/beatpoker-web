@@ -2,10 +2,17 @@ package com.jhf.beatpoker.web.common.utils;
 
 import com.jhf.beatpoker.web.common.response.EnumStatusCode;
 
-import javax.mail.*;
+import javax.mail.Message;
+import javax.mail.Session;
+import javax.mail.Authenticator;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.net.ssl.SSLSocketFactory;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.util.Base64;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,8 +27,15 @@ public class EmailUtils {
         return matcher.matches();
     }
 
-    public static EnumStatusCode sendResetPasswordEmail(String email, String newPassword){
+    public static EnumStatusCode sendVerificationCodeEmail(String email,String verificatonCode){
+        return sendEmail(email,"Verification code","Your verification code: \n\n" + verificatonCode);
+    }
 
+    public static EnumStatusCode sendNewPasswordEmail(String email, String newPassword){
+        return sendEmail(email,"New password","New password is: \n\n" + newPassword);
+    }
+
+    private static EnumStatusCode sendEmail(String email, String subject, String content){
         String myEmailAdress = "12260723@qq.com";
         String authorizationCode = "rpatydpzppmgbhhe";
         String smtpHost = "smtp.qq.com";
@@ -52,8 +66,8 @@ public class EmailUtils {
             message.setFrom(new InternetAddress(myEmailAdress));
             message.setRecipients(Message.RecipientType.TO,
                     InternetAddress.parse(email));
-            message.setSubject("password reset");
-            message.setText("new password is: " + newPassword);
+            message.setSubject(subject);
+            message.setText(content);
 
             Transport.send(message);
         }catch (Exception e){
